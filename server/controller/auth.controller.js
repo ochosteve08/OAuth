@@ -14,3 +14,13 @@ export const Signup = async (req, res, next) => {
     next(error);
   }
 };
+
+
+
+export const SignIn = (req, res,next) =>{
+  try{}
+      catch(error) {
+        next(error);
+
+}}
+
