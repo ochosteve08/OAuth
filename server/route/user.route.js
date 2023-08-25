@@ -1,10 +1,8 @@
-import express from 'express';
+import express from "express";
+import { CreateUser } from "../controller/user.controller.js";
 
 const router = express.Router();
 
-
-router.get("/", (req, res) => {
-  res.json({ message: "fetch users" });
-});
+router.get("/",CreateUser);
 
 export default router;
