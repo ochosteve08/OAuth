@@ -26,3 +26,15 @@ app.listen(port, () => {
 
 app.use("/user", userRoute);
 app.use("/auth", authRoute);
+
+
+app.use((err,req,res, next)=>{
+  const statusCode = err.statusCode || 500;
+  const message = err.message || "internal server error";
+  return res.status(statusCode).json({
+    success: false,
+    error: message,
+    statusCode,
+    message
+  })
+})
