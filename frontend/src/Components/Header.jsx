@@ -13,7 +13,7 @@ const Header = () => {
             <li>About</li>
           </Link>
           <Link to={"signin"}>
-            <li>SignIn</li>
+            <li>Login</li>
           </Link>
         </ul>
       </div>
