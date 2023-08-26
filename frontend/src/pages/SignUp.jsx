@@ -6,6 +6,7 @@ const SignUp = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const [success, setSuccess] = useState(false);
 
   const handleChange = (event) => {
     setFormData({ ...formData, [event.target.id]: event.target.value });
@@ -13,10 +14,10 @@ const SignUp = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (!formData) return;
+
     try {
       setLoading(true);
-      setError(false)
+      setError(false);
       const response = await fetch("http://localhost:3500/auth/signup", {
         method: "POST",
         headers: {
@@ -36,9 +37,10 @@ const SignUp = () => {
       if (response.ok) {
         const result = await response.json();
         console.log(result);
-        setFormData({});
         setLoading(false);
         setError(false);
+        setSuccess(true);
+        setSuccess("login ");
       }
     } catch (error) {
       setErrorMsg(error.message);
@@ -72,7 +74,10 @@ const SignUp = () => {
           className="bg-slate-200  rounded-lg py-2 px-3 outline-blue-200 hover:outline-blue-500"
           onChange={handleChange}
         />
-        <button disabled={loading} className="bg-orange-600 p-2 uppercase text-white rounded-lg font-semibold disabled:opacity-70">
+        <button
+          disabled={loading}
+          className="bg-orange-600 p-2 uppercase text-white rounded-lg font-semibold disabled:opacity-70"
+        >
           {loading ? "Sign Up...." : "Sign Up"}
         </button>
       </form>
@@ -84,6 +89,9 @@ const SignUp = () => {
       </div>
       <p className={`p-3 ${errorMsg ? "bg-red-200" : ""}`}>
         {error && <p>something went wrong</p>}
+      </p>
+      <p className={`p-3 ${success ? "bg-red-200" : ""}`}>
+        {success && <p>Signup Successful</p>}
       </p>
     </div>
   );
