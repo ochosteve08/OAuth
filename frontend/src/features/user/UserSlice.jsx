@@ -24,8 +24,6 @@ export const userSlice = createSlice({
     },
     signInFailure: (state, action) => {
       state.errMsg = action.payload;
-      console.log(action.payload);
-      //   console.log(action.payload.message);
       state.loading = false;
       state.success = false;
       state.error = true;
