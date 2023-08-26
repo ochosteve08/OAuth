@@ -1,12 +1,12 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 const SignUp = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-  const [success, setSuccess] = useState(false);
 
   const handleChange = (event) => {
     setFormData({ ...formData, [event.target.id]: event.target.value });
@@ -30,17 +30,14 @@ const SignUp = () => {
         setLoading(false);
         setError(true);
         const errorData = await response.json();
-        setErrorMsg(errorData.message);
         throw new Error(errorData.message || "Something went wrong");
       }
 
       if (response.ok) {
-        const result = await response.json();
-        console.log(result);
+        await response.json();
         setLoading(false);
         setError(false);
-        setSuccess(true);
-        setSuccess("login ");
+        navigate("/signin");
       }
     } catch (error) {
       setErrorMsg(error.message);
@@ -87,12 +84,13 @@ const SignUp = () => {
           <span className="text-blue-800">Sign In</span>
         </Link>
       </div>
-      <p className={`p-3 ${errorMsg ? "bg-red-200" : ""}`}>
-        {error && <p>something went wrong</p>}
-      </p>
-      <p className={`p-3 ${success ? "bg-red-200" : ""}`}>
-        {success && <p>Signup Successful</p>}
-      </p>
+      <div>
+        {error ? (
+          <div className={`p-3 ${errorMsg ? "bg-red-200" : ""}`}>
+            {errorMsg}
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 };
