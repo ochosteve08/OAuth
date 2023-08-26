@@ -1,14 +1,25 @@
-import { Link,useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import {
+  signInFailure,
+  signInStart,
+  signInSuccess,
+  showError,
+  showLoading,
+  showSuccess,
+  showErrorMessage,
+} from "../features/user/UserSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const SignIn = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [formData, setFormData] = useState({});
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-  const [errorMsg, setErrorMsg] = useState(null);
-  const [success, setSuccess] = useState(false);
+  const loading = useSelector(showLoading);
+  const error = useSelector(showError);
+  const errorMsg = useSelector(showErrorMessage);
+  const success = useSelector(showSuccess);
 
   const handleChange = (event) => {
     setFormData({ ...formData, [event.target.id]: event.target.value });
@@ -18,10 +29,8 @@ const SignIn = () => {
     event.preventDefault();
 
     try {
-      setLoading(true);
-      setError(false);
-      setSuccess(false);
-      setErrorMsg(null);
+      dispatch(signInStart());
+
       const response = await fetch("http://localhost:3500/auth/signin", {
         method: "POST",
         headers: {
@@ -31,25 +40,28 @@ const SignIn = () => {
       });
 
       if (!response.ok) {
-        setLoading(false);
-        setError(true);
-        const result = await response.json();
-        throw new Error(result.message || "Something went wrong");
+        const error = await response.json();
+        dispatch(signInFailure(error.message));
+
+        throw new Error(error.message || "Something went wrong");
       }
 
       if (response.ok) {
-        await response.json();
+        const data = await response.json();
 
-        setLoading(false);
-        setError(false);
-        setSuccess(true);
-        navigate('/')
+        dispatch(signInSuccess(data));
+        navigate("/");
       }
     } catch (error) {
-      setErrorMsg(error.message);
-      console.error("Login Error:", error.message);
-      setLoading(false);
-      setError(true);
+      if (error.message === "Failed to fetch") {
+        dispatch(
+          signInFailure(
+            "Network error. Please check your connection and try again."
+          )
+        );
+      } else {
+        dispatch(signInFailure(error.message));
+      }
     }
   };
 
