@@ -10,6 +10,7 @@ import {
   showErrorMessage,
 } from "../features/user/UserSlice";
 import { useDispatch, useSelector } from "react-redux";
+import Oauth from "../Components/Oauth";
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -51,6 +52,7 @@ const SignIn = () => {
 
         dispatch(signInSuccess(data));
         navigate("/");
+          setFormData({}); 
       }
     } catch (error) {
       if (error.message === "Failed to fetch") {
@@ -89,6 +91,7 @@ const SignIn = () => {
         >
           {loading ? "Signing In...." : "Sign In"}
         </button>
+        <Oauth/>
       </form>
       <div className="flex space-x-3 my-3">
         <p>Don&#39;t Have An Account?</p>
