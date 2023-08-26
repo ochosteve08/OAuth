@@ -2,6 +2,7 @@ import { json } from "express";
 import UserModel from "../model/user.model.js";
 import bcryptjs from "bcryptjs";
 import { errorHandler } from "../utils/error.js";
+import jwt from "jsonwebtoken";
 
 export const Signup = async (req, res, next) => {
   try {
@@ -27,13 +28,22 @@ export const SignIn = async (req, res, next) => {
       return next(errorHandler(401, "user not found"));
     }
 
-    const match = bcryptjs.compareSync(password, user.password);
+    const match = bcryptjs.compareSync(password, validUser.password);
     if (!match) {
       return next(errorHandler(401, "wrong credentials"));
     }
-    const sanitizedUser = { ...validUser._doc };
-    delete sanitizedUser.password;
-    return res.status(200).json({ user: sanitizedUser });
+
+    const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
+    const { password: hashPassword, ...rest } = validUser._doc;
+
+    res
+      .cookie("jwt", token, {
+        httpOnly: true,
+        secure: true,
+        maxAge: 30 * 60 * 1000,
+      })
+      .status(200)
+      .json(rest);
   } catch (error) {
     next(error);
   }
