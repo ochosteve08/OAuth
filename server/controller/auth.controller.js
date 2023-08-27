@@ -52,6 +52,7 @@ export const SignIn = async (req, res, next) => {
 export const Google = async (req, res, next) => {
   try {
     const { name, email, photo } = req.body;
+
     const User = await UserModel.findOne({ email });
     if (User) {
       const token = jwt.sign({ id: User._id }, process.env.JWT_SECRET);
@@ -75,7 +76,7 @@ export const Google = async (req, res, next) => {
           Math.floor(Math.random() * 10000).toString(),
         email,
         password: hashPassword,
-        profilePhoto: photo,
+        profilePicture: photo,
       });
 
       const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
