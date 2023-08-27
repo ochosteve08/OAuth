@@ -3,6 +3,7 @@ import { auth } from "../Firebase";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { signInSuccess } from "../features/user/UserSlice";
+import { FcGoogle } from "react-icons/fc";
 
 const Oauth = () => {
   const navigate = useNavigate();
@@ -35,10 +36,10 @@ const Oauth = () => {
   return (
     <button
       type="button"
-      className=" bg-blue-700 p-2 uppercase text-white rounded-lg font-semibold disabled:opacity-70"
+      className=" bg-blue-700 p-2 uppercase text-white rounded-lg font-semibold disabled:opacity-70 flex justify-center items-center gap-3"
       onClick={googleClick}
     >
-      Continue with Google
+      <FcGoogle className="text-3xl " /> Continue with Google 
     </button>
   );
 };
