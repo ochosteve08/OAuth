@@ -51,16 +51,43 @@ export const SignIn = async (req, res, next) => {
 
 export const Google = async (req, res, next) => {
   try {
-    const {  email} = req.body;
-    const validUser = await UserModel.findOne({ email });
-    if (validUser) {
-      const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
-      const { password: hashPassword, ...rest } = validUser._doc;
-      res.cookie("jwt", token, {
-        httpOnly: true,
-        secure: true,
-        maxAge: 30 * 60 * 1000,
+    const { name, email, photo } = req.body;
+    const User = await UserModel.findOne({ email });
+    if (User) {
+      const token = jwt.sign({ id: User._id }, process.env.JWT_SECRET);
+      const { password: hashPassword, ...rest } = User._doc;
+      res
+        .cookie("jwt", token, {
+          httpOnly: true,
+          secure: true,
+          maxAge: 30 * 60 * 1000,
+        })
+        .status(200)
+        .json(rest);
+    } else {
+      const generatedPassword =
+        Math.random().toString(36).slice(-8) +
+        Math.random().toString(36).slice(-8);
+      const hashPassword = bcryptjs.hashSync(generatedPassword, 10);
+      const newUser = await UserModel.create({
+        username:
+          name.split(" ").join("").toLowerCase() +
+          Math.floor(Math.random() * 10000).toString(),
+        email,
+        password: hashPassword,
+        profilePhoto: photo,
       });
+
+      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
+      const { password: removePassword, ...rest } = newUser._doc;
+      res
+        .cookie("jwt", token, {
+          httpOnly: true,
+          secure: true,
+          maxAge: 30 * 60 * 1000,
+        })
+        .status(200)
+        .json(rest);
     }
   } catch (error) {
     next(error);
