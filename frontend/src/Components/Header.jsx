@@ -19,7 +19,7 @@ const Header = () => {
           <Link to={"/profile"}>
             {currentUser ? (
               <img
-                width={35}
+                width={25}
                 className="rounded-full object-cover"
                 src={currentUser.profilePicture}
                 alt="profile"
