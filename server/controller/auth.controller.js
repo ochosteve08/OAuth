@@ -48,3 +48,21 @@ export const SignIn = async (req, res, next) => {
     next(error);
   }
 };
+
+export const Google = async (req, res, next) => {
+  try {
+    const {  email} = req.body;
+    const validUser = await UserModel.findOne({ email });
+    if (validUser) {
+      const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
+      const { password: hashPassword, ...rest } = validUser._doc;
+      res.cookie("jwt", token, {
+        httpOnly: true,
+        secure: true,
+        maxAge: 30 * 60 * 1000,
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
