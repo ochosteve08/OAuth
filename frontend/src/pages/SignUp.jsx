@@ -26,7 +26,7 @@ const SignUp = () => {
         },
         body: JSON.stringify(formData),
       });
-
+console.log(response);
       if (!response.ok) {
         setLoading(false);
         setError(true);

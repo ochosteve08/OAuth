@@ -13,7 +13,7 @@ const app = express();
 const port = 3500;
 
 app.use(express.json());
-app.use(cookieParser)
+app.use(cookieParser())
 
 app.use(
   cors({
