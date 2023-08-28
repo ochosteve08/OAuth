@@ -4,7 +4,7 @@ import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
 const rootReducer = combineReducers({ user: userReducer });
-const persistConfig = {
+export const persistConfig = {
   key: "root",
   version: 1,
   storage,
@@ -19,7 +19,5 @@ const store = configureStore({
     }),
 });
 
-
- export const persistor = persistStore(store);
+export const persistor = persistStore(store);
 export default store;
-

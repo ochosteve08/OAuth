@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 export const Signup = async (req, res, next) => {
   try {
     const { username, email, password } = req.body;
-   
+
     const hashPassword = bcryptjs.hashSync(password, 10);
     const newUser = await UserModel.create({
       username,
@@ -22,7 +22,7 @@ export const Signup = async (req, res, next) => {
 export const SignIn = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-  
+
     const validUser = await UserModel.findOne({ email });
 
     if (!validUser) {
@@ -98,7 +98,16 @@ export const Google = async (req, res, next) => {
 
 export const signout = (req, res, next) => {
   const cookies = req.cookies;
-  if (!cookies?.jwt) return next(errorHandler(204, "no content"));
 
-  res.clearCookie("jwt").status(200).json("Signout successful");
+  // user is already signed out
+  if (!cookies?.jwt)
+    return res.status(200).json({
+      success: true,
+      message: "Already signed out",
+    });
+
+  res.clearCookie("jwt").status(200).json({
+    success: true,
+    message: "Signout successful",
+  });
 };

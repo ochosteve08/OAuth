@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { userDetails } from "../features/user/UserSlice";
 import { useState, useRef, useEffect } from "react";
 import app from "../Firebase";
@@ -9,11 +9,15 @@ import {
   ref,
   uploadBytesResumable,
 } from "firebase/storage";
+import { signOut } from "../features/user/UserSlice";
+
 
 const Profile = () => {
+  const currentUser = useSelector(userDetails);
+  const dispatch = useDispatch();
   const fileRef = useRef(null);
   const [image, setImage] = useState(undefined);
-  const currentUser = useSelector(userDetails);
+
   const [loading, setLoading] = useState(false);
   const [imagePercent, setImagePercent] = useState(0);
   const [imageError, setImageError] = useState(false);
@@ -27,6 +31,10 @@ const Profile = () => {
       handleFileUpload(image);
     }
   }, [image]);
+
+  const handleChange = (event) => {
+    setFormData({ ...formData, [event.target.id]: event.target.value });
+  };
 
   const handleFileUpload = async (image) => {
     const storage = getStorage(app);
@@ -53,10 +61,24 @@ const Profile = () => {
     );
   };
 
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await fetch("http://localhost:3500/auth/signout", { method: "POST" });
+      dispatch(signOut());
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl text-center font-bold my-6">Profile</h1>
-      <form className="flex flex-col space-y-6">
+      <form className="flex flex-col space-y-6" onSubmit={handleSubmit}>
         <input
           type="file"
           ref={fileRef}
@@ -73,9 +95,7 @@ const Profile = () => {
         />
         <p className="text-sm self-center">
           {imageError ? (
-            <span className="text-red-700">
-              Error uploading image
-            </span>
+            <span className="text-red-700">Error uploading image</span>
           ) : imagePercent > 0 && imagePercent < 100 ? (
             <span className="text-slate-700">{`Uploading: ${imagePercent} %`}</span>
           ) : imagePercent === 100 ? (
@@ -95,23 +115,24 @@ const Profile = () => {
           id="username"
           className="bg-slate-200  rounded-lg py-2 px-3 outline-blue-200 hover:outline-blue-500"
           placeholder="username"
-          // value={username}
-          // onChange={handleChange}
+          defaultValue={currentUser.username}
+          onChange={handleChange}
         />
         <input
           type="email"
           id="email"
-          // value={email}
+          defaultValue={currentUser.email}
           className="bg-slate-200  rounded-lg py-2 px-3 outline-blue-200 hover:outline-blue-500"
           placeholder="email"
-          // onChange={handleChange}
+          onChange={handleChange}
+          disabled
         />
         <input
           type="password"
           id="password"
           className="bg-slate-200  rounded-lg py-2 px-3 outline-blue-200 hover:outline-blue-500"
           placeholder="password"
-          // onChange={handleChange}
+          onChange={handleChange}
         />
 
         <button
@@ -122,7 +143,9 @@ const Profile = () => {
         </button>
         <div className="flex justify-between text-red-600 font-semibold">
           <span>Delete Account</span>
-          <span>Sign Out</span>
+          <span onClick={handleSignOut} className="text-red-700 cursor-pointer">
+            Sign Out
+          </span>
         </div>
       </form>
     </div>
