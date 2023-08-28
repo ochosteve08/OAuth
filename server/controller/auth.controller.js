@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 export const Signup = async (req, res, next) => {
   try {
     const { username, email, password } = req.body;
-     console.log(req.body)
+    console.log(req.body);
     const hashPassword = bcryptjs.hashSync(password, 10);
     const newUser = await UserModel.create({
       username,
@@ -22,7 +22,7 @@ export const Signup = async (req, res, next) => {
 export const SignIn = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    console.log(req.body)
+    console.log(req.body);
     const validUser = await UserModel.findOne({ email });
 
     if (!validUser) {
@@ -91,6 +91,18 @@ export const Google = async (req, res, next) => {
         .status(200)
         .json(rest);
     }
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteUser = async (req, res, next) => {
+  if (req.user.id !== req.params.id) {
+    return next(errorHandler(401, "kindly login"));
+  }
+  try {
+    await User.findByIdAndDelete(req.params.id);
+    res.status(200).json("User has been deleted...");
   } catch (error) {
     next(error);
   }
