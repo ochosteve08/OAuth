@@ -4,7 +4,7 @@ import { userDetails } from "../features/user/UserSlice";
 
 const Header = () => {
   const currentUser = useSelector(userDetails);
-
+console.log(window.localStorage);
   return (
     <div className="bg-slate-200">
       <div className="flex justify-between items-center max-w-6xl mx-auto p-3">
