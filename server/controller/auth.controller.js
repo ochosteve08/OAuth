@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 export const Signup = async (req, res, next) => {
   try {
     const { username, email, password } = req.body;
+     console.log(req.body)
     const hashPassword = bcryptjs.hashSync(password, 10);
     const newUser = await UserModel.create({
       username,
@@ -21,6 +22,7 @@ export const Signup = async (req, res, next) => {
 export const SignIn = async (req, res, next) => {
   try {
     const { email, password } = req.body;
+    console.log(req.body)
     const validUser = await UserModel.findOne({ email });
 
     if (!validUser) {
