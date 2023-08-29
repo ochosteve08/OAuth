@@ -6,10 +6,9 @@ import { signout } from "../controller/auth.controller.js";
 
 const router = express.Router();
 
-router.post('/signup', Signup)
+router.post("/signup", Signup);
 router.post("/signin", SignIn);
 router.post("/google", Google);
 router.post("/signout", signout);
 
-
-export default router
+export default router;

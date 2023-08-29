@@ -50,12 +50,7 @@ export const userSlice = createSlice({
       state.success = false;
       state.error = false;
     },
-    deleteUserSuccess: (state) => {
-      state.currentUser = null;
-      state.loading = false;
-      state.error = false;
-      state.success = true;
-    },
+    deleteUserSuccess:() => initialState,
     deleteUserFailure: (state, action) => {
       state.errMsg = action.payload;
       state.loading = false;

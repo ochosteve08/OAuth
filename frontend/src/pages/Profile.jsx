@@ -9,8 +9,12 @@ import {
   ref,
   uploadBytesResumable,
 } from "firebase/storage";
-import { signOut } from "../features/user/UserSlice";
-
+import {
+  signOut,
+  deleteUserFailure,
+  deleteUserStart,
+  deleteUserSuccess,
+} from "../features/user/UserSlice";
 
 const Profile = () => {
   const currentUser = useSelector(userDetails);
@@ -60,6 +64,28 @@ const Profile = () => {
       }
     );
   };
+  const handleDeleteAccount = async () => {
+    try {
+      dispatch(deleteUserStart());
+      const res = await fetch(`http://localhost:3500/user/${currentUser._id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+      const data = await res.json();
+      console.log(data);
+      if (data.success === false) {
+        dispatch(deleteUserFailure(data.message));
+        return;
+      }
+      dispatch(deleteUserSuccess(data));
+    } catch (error) {
+      console.log(error);
+      dispatch(deleteUserFailure(error));
+    }
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -73,7 +99,6 @@ const Profile = () => {
       console.log(error);
     }
   };
-
 
   return (
     <div className="p-3 max-w-lg mx-auto">
@@ -142,7 +167,12 @@ const Profile = () => {
           {loading ? "UPDATE..." : "UPDATE"}
         </button>
         <div className="flex justify-between text-red-600 font-semibold">
-          <span>Delete Account</span>
+          <span
+            onClick={handleDeleteAccount}
+            className="text-red-700 cursor-pointer"
+          >
+            Delete Account
+          </span>
           <span onClick={handleSignOut} className="text-red-700 cursor-pointer">
             Sign Out
           </span>

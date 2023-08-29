@@ -3,25 +3,14 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import userRoute from "./route/user.route.js";
 import authRoute from "./route/auth.route.js";
-import cors from 'cors';
-import cookieParser from 'cookie-parser'
-
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import { logger, logEvents } from "./middleware/logger.js";
 
 dotenv.config();
 
 const app = express();
 const port = 3500;
-
-app.use(express.json());
-app.use(cookieParser())
-
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
 
 mongoose
   .connect(process.env.MONGO_URI)
@@ -32,21 +21,57 @@ mongoose
     console.log("error connecting to mongodb", err);
   });
 
+app.use(express.json());
+app.use(cookieParser());
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  })
+);
+
 app.listen(port, () => {
   console.log(`listening on port:${port}`);
 });
 
+app.use(logger);
+
 app.use("/user", userRoute);
 app.use("/auth", authRoute);
 
-
-app.use((err,req,res, next)=>{
+app.use((err, req, res, next) => {
+  logEvents(
+    `${err.name}: ${err.message}\t${req.method}\t${req.url}\t${
+      req.headers.origin || "Origin not provided"
+    }${JSON.stringify(req.cookies)}\t`,
+    "errLog.log"
+  );
+  console.log(err.stack);
   const statusCode = err.statusCode || 500;
   const message = err.message || "internal server error";
   return res.status(statusCode).json({
     success: false,
     error: message,
     statusCode,
-    message
-  })
-})
+    message,
+  });
+});
+
+mongoose.connection.on("error", (error) => {
+  console.log(error);
+
+  const errno = error.errno || "N/A";
+  const code = error.code || "N/A";
+  const codeName = error.codeName || "N/A";
+  const syscall = error.syscall || "N/A";
+  const hostname = error.hostname || "N/A";
+  const ok = error.ok || "N/A";
+  const connectionGeneration = error.connectionGeneration || "N/A";
+
+  const errorMessage = `Errno:${errno}\tCode:${code}\tCodeName:${codeName}\tSyscall:${syscall}\tHostname:${hostname}\tOK:${ok}\tConnectionGeneration:${connectionGeneration}\t`;
+
+  logEvents(errorMessage, "mongoErrorLog.log");
+});
