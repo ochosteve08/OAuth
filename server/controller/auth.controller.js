@@ -22,9 +22,7 @@ export const Signup = async (req, res, next) => {
 export const SignIn = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-
     const validUser = await UserModel.findOne({ email });
-
     if (!validUser) {
       return next(errorHandler(401, "user not found"));
     }
@@ -34,17 +32,23 @@ export const SignIn = async (req, res, next) => {
       return next(errorHandler(401, "wrong credentials"));
     }
 
-    const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
+    const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET, {
+      expiresIn: "20m",
+    });
+
     const { password: hashPassword, ...rest } = validUser._doc;
 
-    res
-      .cookie("jwt", token, {
-        httpOnly: true,
-        secure: true,
-        maxAge: 30 * 60 * 1000,
-      })
-      .status(200)
-      .json(rest);
+    res.cookie("access_token", token, {
+      httpOnly: true,
+      secure: true,
+      maxAge: 30 * 60 * 1000,
+      sameSite: "None",
+    });
+    res.cookies = {
+      access_token: token,
+    };
+
+    return res.status(200).json(rest);
   } catch (error) {
     next(error);
   }
@@ -59,7 +63,7 @@ export const Google = async (req, res, next) => {
       const token = jwt.sign({ id: User._id }, process.env.JWT_SECRET);
       const { password: hashPassword, ...rest } = User._doc;
       res
-        .cookie("jwt", token, {
+        .cookie("access_token", token, {
           httpOnly: true,
           secure: true,
           maxAge: 30 * 60 * 1000,
@@ -82,8 +86,9 @@ export const Google = async (req, res, next) => {
 
       const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
       const { password: removePassword, ...rest } = newUser._doc;
+      console.log(token);
       res
-        .cookie("jwt", token, {
+        .cookie("access_token", token, {
           httpOnly: true,
           secure: true,
           maxAge: 30 * 60 * 1000,
@@ -98,15 +103,17 @@ export const Google = async (req, res, next) => {
 
 export const signout = (req, res, next) => {
   const cookies = req.cookies;
+  console.log("signout cookies:", cookies);
 
   // user is already signed out
-  if (!cookies?.jwt)
-    return res.status(200).json({
-      success: true,
-      message: "Already signed out",
-    });
+  // if (!cookies?.access_token) {
+  //   return res.status(200).json({
+  //     success: false,
+  //     message: "Already signed out",
+  //   });
+  // }
 
-  res.clearCookie("jwt").status(200).json({
+  res.clearCookie("access_token").status(200).json({
     success: true,
     message: "Signout successful",
   });

@@ -5,7 +5,8 @@ import { verifyToken } from "../middleware/verify.user.js";
 const router = express.Router();
 
 router.get("/", test);
-router.patch("/:id", verifyToken, updateUser);
-router.delete("/:id", verifyToken, deleteUser);
+router.use(verifyToken);
+router.patch("/:id", updateUser);
+router.delete("/:id", deleteUser);
 
 export default router;
