@@ -43,8 +43,10 @@ export const SignIn = async (req, res, next) => {
       secure: true,
       maxAge: 30 * 60 * 1000,
       sameSite: "None",
-   
     });
+    res.cookies = {
+      access_token: token,
+    };
 
     return res.status(200).json(rest);
   } catch (error) {
@@ -104,12 +106,12 @@ export const signout = (req, res, next) => {
   console.log("signout cookies:", cookies);
 
   // user is already signed out
-  if (!cookies?.access_token) {
-    return res.status(200).json({
-      success: false,
-      message: "Already signed out",
-    });
-  }
+  // if (!cookies?.access_token) {
+  //   return res.status(200).json({
+  //     success: false,
+  //     message: "Already signed out",
+  //   });
+  // }
 
   res.clearCookie("access_token").status(200).json({
     success: true,

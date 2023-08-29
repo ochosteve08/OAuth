@@ -51,7 +51,7 @@ const SignIn = () => {
         const data = await response.json();
 
         dispatch(signInSuccess(data));
-        navigate("/");
+        navigate("/profile");
           setFormData({}); 
       }
     } catch (error) {

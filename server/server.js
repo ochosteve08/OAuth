@@ -6,7 +6,7 @@ import authRoute from "./route/auth.route.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { logger, logEvents } from "./middleware/logger.js";
-
+import morgan from 'morgan'
 dotenv.config();
 
 const app = express();
@@ -20,6 +20,20 @@ mongoose
   .catch((err) => {
     console.log("error connecting to mongodb", err);
   });
+
+
+  morgan.token("id", function getId(req) {
+    return req.id;
+  });
+  const stream = {
+    write: (message) => logEvents(message.trim(), "httpRequest.log"), // Here, 'httpRequest.log' is the file name where you want to store HTTP request logs
+  };
+  app.use(
+    morgan(":method :url :status :res[content-length] - :response-time ms", {
+      stream,
+    })
+  );
+
 
 app.use(express.json());
 app.use(cookieParser());
