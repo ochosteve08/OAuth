@@ -37,7 +37,7 @@ const Oauth = () => {
   return (
     <button
       type="button"
-      className=" bg-blue-700 p-2 uppercase text-white rounded-lg font-semibold disabled:opacity-70 flex justify-center items-center gap-3"
+      className=" bg-blue-700 px-2 py-1 uppercase text-white rounded-lg font-semibold disabled:opacity-70 hover:opacity-90 flex justify-center items-center gap-3"
       onClick={googleClick}
     >
       <FcGoogle className="text-3xl " /> Continue with Google
