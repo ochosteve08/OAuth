@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Oauth from "../Components/Oauth";
+import BASE_URL from '../../Config'
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ const SignUp = () => {
     try {
       setLoading(true);
       setError(false);
-      const response = await fetch("http://localhost:3500/auth/signup", {
+      const response = await fetch(`${BASE_URL}/auth/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
