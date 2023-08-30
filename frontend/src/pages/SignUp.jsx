@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Oauth from "../Components/Oauth";
-import BASE_URL from '../../Config'
+import {BASE_URL} from '../../Config'
 
 const SignUp = () => {
   const navigate = useNavigate();
