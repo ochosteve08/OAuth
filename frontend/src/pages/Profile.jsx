@@ -21,6 +21,7 @@ import {
   resetMessages,
   showError,
 } from "../features/user/UserSlice";
+import { BASE_URL } from "../../Config";
 
 const Profile = () => {
   const currentUser = useSelector(userDetails);
@@ -111,7 +112,7 @@ const Profile = () => {
       try {
         dispatch(deleteUserStart());
         const res = await fetch(
-          `http://localhost:3500/user/${currentUser._id}`,
+          `${BASE_URL}/user/${currentUser._id}`,
           {
             method: "DELETE",
             headers: {
@@ -139,7 +140,7 @@ const Profile = () => {
     event.preventDefault();
     try {
       dispatch(updateUserStart());
-      const res = await fetch(`http://localhost:3500/user/${currentUser._id}`, {
+      const res = await fetch(`${BASE_URL}/user/${currentUser._id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -162,7 +163,7 @@ const Profile = () => {
 
   const handleSignOut = async () => {
     try {
-      const response = await fetch("http://localhost:3500/auth/signout", {
+      const response = await fetch( `${BASE_URL}/auth/signout`, {
         method: "POST",
         credentials: "include",
         withCredentials: true,

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { signInSuccess } from "../features/user/UserSlice";
 import { FcGoogle } from "react-icons/fc";
+import { BASE_URL } from "../../Config";
 
 const Oauth = () => {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ const Oauth = () => {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
 
-      const response = await fetch("http://localhost:3500/auth/google", {
+      const response = await fetch(`${BASE_URL}/auth/google`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

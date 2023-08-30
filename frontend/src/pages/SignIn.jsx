@@ -11,6 +11,7 @@ import {
 } from "../features/user/UserSlice";
 import { useDispatch, useSelector } from "react-redux";
 import Oauth from "../Components/Oauth";
+import { BASE_URL } from "../../Config";
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ const SignIn = () => {
     try {
       dispatch(signInStart());
 
-      const response = await fetch("http://localhost:3500/auth/signin", {
+      const response = await fetch(`${BASE_URL}/auth/signin`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
