@@ -247,7 +247,7 @@ const Profile = () => {
           {loading ? "UPDATE..." : "UPDATE"}
         </button>
       </form>
-      <div className="flex justify-between text-red-600 font-semibold">
+      <div className="flex justify-between text-red-600 my-3 font-semibold">
         <span
           onClick={handleDeleteAccount}
           className="text-red-700 cursor-pointer"

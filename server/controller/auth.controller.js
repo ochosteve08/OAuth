@@ -13,7 +13,7 @@ export const Signup = async (req, res, next) => {
       email,
       password: hashPassword,
     });
-     const { password: Password, ...rest } = newUser._doc;
+    const { password: Password, ...rest } = newUser._doc;
     res.json(user);
   } catch (error) {
     next(error);
@@ -59,8 +59,9 @@ export const Google = async (req, res, next) => {
       res
         .cookie("access_token", token, {
           httpOnly: true,
-          sameSite: "None",
-          expiresIn: "30m",
+          path: "/",
+          domain: "localhost",
+          maxAge: 30 * 60 * 1000,
         })
         .status(200)
         .json(rest);
@@ -80,14 +81,13 @@ export const Google = async (req, res, next) => {
 
       const token = jwt.sign({ id: newUser._id }, jwtSecret);
       const { password: removePassword, ...rest } = newUser._doc;
-     
-      res
-        .cookie("access_token", token, {
-          httpOnly: true,
-          expiresIn: "30m",
-        })
-        .status(200)
-        .json(rest);
+
+      res.cookie("access_token", token, {
+        httpOnly: true,
+        expiresIn: "30m",
+      });
+
+      return res.status(200).json(rest);
     }
   } catch (error) {
     next(error);
@@ -96,7 +96,7 @@ export const Google = async (req, res, next) => {
 
 export const signout = (req, res, next) => {
   const cookies = req.cookies;
-  
+
   //user is already signed out
   if (!cookies?.access_token) {
     return res.status(200).json({
@@ -105,7 +105,9 @@ export const signout = (req, res, next) => {
     });
   }
 
-  res.clearCookie("access_token").status(200).json({
+  res.clearCookie("access_token");
+
+  return res.status(200).json({
     success: true,
     message: "Signout successful",
   });
