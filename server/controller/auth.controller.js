@@ -7,14 +7,14 @@ import { jwtSecret } from "../utils/jwtSecret.js";
 export const Signup = async (req, res, next) => {
   try {
     const { username, email, password } = req.body;
-
     const hashPassword = bcryptjs.hashSync(password, 10);
     const newUser = await UserModel.create({
       username,
       email,
       password: hashPassword,
     });
-    res.json(newUser);
+     const { password: Password, ...rest } = newUser._doc;
+    res.json(user);
   } catch (error) {
     next(error);
   }
@@ -80,7 +80,7 @@ export const Google = async (req, res, next) => {
 
       const token = jwt.sign({ id: newUser._id }, jwtSecret);
       const { password: removePassword, ...rest } = newUser._doc;
-      console.log(token);
+     
       res
         .cookie("access_token", token, {
           httpOnly: true,
@@ -95,16 +95,15 @@ export const Google = async (req, res, next) => {
 };
 
 export const signout = (req, res, next) => {
-  // const cookies = req.cookies;
-  // console.log("signout cookies:", cookies);
-
-  // //user is already signed out
-  // if (!cookies?.access_token) {
-  //   return res.status(200).json({
-  //     success: false,
-  //     message: "Already signed out",
-  //   });
-  // }
+  const cookies = req.cookies;
+  
+  //user is already signed out
+  if (!cookies?.access_token) {
+    return res.status(200).json({
+      success: false,
+      message: "Already signed out",
+    });
+  }
 
   res.clearCookie("access_token").status(200).json({
     success: true,
