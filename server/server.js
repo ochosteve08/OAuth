@@ -54,7 +54,7 @@ app.use(
 );
 
 app.listen(port, () => {
-  console.log(`listening on port:${port}`);
+  console.log(`listening on http://localhost:${port}`);
 });
 
 app.use(logger);
@@ -69,7 +69,7 @@ app.use((err, req, res, next) => {
     }${JSON.stringify(req.cookies)}\t`,
     "errLog.log"
   );
-  console.log(err.stack);
+ 
   const statusCode = err.statusCode || 500;
   const message = err.message || "internal server error";
   return res.status(statusCode).json({
