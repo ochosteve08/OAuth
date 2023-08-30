@@ -9,9 +9,11 @@ import { logger, logEvents } from "./middleware/logger.js";
 import morgan from 'morgan'
 dotenv.config();
 
+
+
 const app = express();
 const port = 3500;
-
+app.use(cookieParser());
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
@@ -21,6 +23,10 @@ mongoose
     console.log("error connecting to mongodb", err);
   });
 
+
+  app.get('/',(req,res)=>{
+    res.json({message: "working"})
+  })
 
   morgan.token("id", function getId(req) {
     return req.id;
@@ -36,13 +42,13 @@ mongoose
 
 
 app.use(express.json());
-app.use(cookieParser());
+// app.use(cookieParser());
 
 app.use(
   cors({
     origin: "http://localhost:5173",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    methods: ["GET", "POST", "PUT", "DELETE","PATCH"],
+    // allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
 );

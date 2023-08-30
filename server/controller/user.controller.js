@@ -8,14 +8,21 @@ export const test = (req, res) => {
 
 export const updateUser = async (req, res, next) => {
   const { id } = req.params;
-  const { username, email, password, profilePicture } = req.body;
+  console.log(id)
+  const {
+    username,
+    email,
+    password: updatePassword,
+    profilePicture,
+  } = req.body;
+  console.log(req.body);
   if (req.user.id !== id) {
     return next(errorHandler(401, "kindly login"));
   }
   try {
     let hashPassword;
-    if (password) {
-      hashPassword = bcryptjs.hashSync(password, 10);
+    if (updatePassword) {
+      hashPassword = bcryptjs.hashSync(updatePassword, 10);
     }
 
     const updatedUser = await UserModel.findByIdAndUpdate(
@@ -36,7 +43,6 @@ export const updateUser = async (req, res, next) => {
     next(error);
   }
 };
-
 
 export const deleteUser = async (req, res, next) => {
   // if (req.user.id !== req.params.id) {
