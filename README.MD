@@ -37,7 +37,28 @@ This is a full-stack web application built with the MERN (MongoDB, Express, Reac
 
 ## Running the Application
 
-(You can provide steps here on how to set up and run the application.)
+
+### Installation
+
+1. Clone the repository:
+
+```shell
+https://github.com/ochosteve08/OAuth.gitgit clone 
+```
+
+2. On frontend and server directory,Install the dependencies:
+
+```shell
+npm install
+```
+
+3. Start the development server:
+
+```shell
+npm run dev
+```
+
+By default, the server will run on `http://localhost:3500` while the the client will run on `http://localhost:5173`.
 
 ## Contribution
 
