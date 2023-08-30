@@ -18,6 +18,8 @@ const Oauth = () => {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
+        withCredentials: true,
         body: JSON.stringify({
           name: result.user.displayName,
           email: result.user.email,
@@ -26,7 +28,7 @@ const Oauth = () => {
       });
       if (response.ok) {
         const data = await response.json();
-       
+
         dispatch(signInSuccess(data));
         navigate("/");
       }

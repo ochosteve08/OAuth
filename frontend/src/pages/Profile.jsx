@@ -14,11 +14,12 @@ import {
   deleteUserFailure,
   deleteUserStart,
   deleteUserSuccess,
-  showError,
   showLoading,
   updateUserFailure,
   updateUserStart,
   updateUserSuccess,
+  resetMessages,
+  showError,
 } from "../features/user/UserSlice";
 
 const Profile = () => {
@@ -26,9 +27,9 @@ const Profile = () => {
   const dispatch = useDispatch();
   const fileRef = useRef(null);
   const [image, setImage] = useState(undefined);
-  const error = useSelector(showError);
 
   const loading = useSelector(showLoading);
+  const error = useSelector(showError);
   const [imagePercent, setImagePercent] = useState(0);
   const [imageError, setImageError] = useState(false);
   const [updateSuccess, setUpdateSuccess] = useState(false);
@@ -39,6 +40,28 @@ const Profile = () => {
     email: currentUser.email,
     profilePicture: currentUser.profilePicture,
   });
+
+  useEffect(() => {
+    let errorTimeout, successTimeout;
+
+    if (error) {
+      errorTimeout = setTimeout(() => {
+        dispatch(resetMessages());
+      }, 5000);
+    }
+
+    if (updateSuccess) {
+      successTimeout = setTimeout(() => {
+        setUpdateSuccess(false);
+      }, 5000);
+    }
+
+    // Clear the timeouts when the component is unmounted
+    return () => {
+      clearTimeout(errorTimeout);
+      clearTimeout(successTimeout);
+    };
+  }, [error, updateSuccess]);
 
   useEffect(() => {
     if (image) {
@@ -61,7 +84,7 @@ const Profile = () => {
         const progress =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         setImagePercent(Math.round(progress));
-        console.log("Upload is " + progress + "% done");
+        // console.log("Upload is " + progress + "% done");
       },
       (error) => {
         console.log(error);
@@ -99,7 +122,7 @@ const Profile = () => {
           }
         );
         const data = await res.json();
-        console.log(data);
+
         if (data.success === false) {
           dispatch(deleteUserFailure(data.message));
           return;
@@ -144,8 +167,8 @@ const Profile = () => {
         credentials: "include",
         withCredentials: true,
       });
-      const result = await response.json();
-      console.log(result);
+      await response.json();
+
       dispatch(signOut());
     } catch (error) {
       console.log(error);
@@ -224,7 +247,7 @@ const Profile = () => {
           {loading ? "UPDATE..." : "UPDATE"}
         </button>
       </form>
-      <div className="flex justify-between text-red-600 font-semibold">
+      <div className="flex justify-between text-red-600 my-3 font-semibold">
         <span
           onClick={handleDeleteAccount}
           className="text-red-700 cursor-pointer"

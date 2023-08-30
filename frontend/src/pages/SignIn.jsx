@@ -51,11 +51,11 @@ const SignIn = () => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
+        
         dispatch(signInSuccess(data));
         navigate("/profile");
         setFormData({});
-        // console.log(data)
+      
       }
     } catch (error) {
       if (error.message === "Failed to fetch") {
