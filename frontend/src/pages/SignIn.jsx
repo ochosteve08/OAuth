@@ -37,6 +37,8 @@ const SignIn = () => {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
+         withCredentials: true ,
         body: JSON.stringify(formData),
       });
 
@@ -49,10 +51,11 @@ const SignIn = () => {
 
       if (response.ok) {
         const data = await response.json();
-
+        console.log(data);
         dispatch(signInSuccess(data));
         navigate("/profile");
-          setFormData({}); 
+        setFormData({});
+        // console.log(data)
       }
     } catch (error) {
       if (error.message === "Failed to fetch") {
@@ -91,7 +94,7 @@ const SignIn = () => {
         >
           {loading ? "Signing In...." : "Sign In"}
         </button>
-        <Oauth/>
+        <Oauth />
       </form>
       <div className="flex space-x-3 my-3">
         <p>Don&#39;t Have An Account?</p>

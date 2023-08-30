@@ -14,6 +14,11 @@ import {
   deleteUserFailure,
   deleteUserStart,
   deleteUserSuccess,
+  showError,
+  showLoading,
+  updateUserFailure,
+  updateUserStart,
+  updateUserSuccess,
 } from "../features/user/UserSlice";
 
 const Profile = () => {
@@ -21,14 +26,19 @@ const Profile = () => {
   const dispatch = useDispatch();
   const fileRef = useRef(null);
   const [image, setImage] = useState(undefined);
+  const error = useSelector(showError);
 
-  const [loading, setLoading] = useState(false);
+  const loading = useSelector(showLoading);
   const [imagePercent, setImagePercent] = useState(0);
   const [imageError, setImageError] = useState(false);
-  const [formData, setFormData] = useState({});
+  const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [showUploadSuccess, setShowUploadSuccess] = useState(false);
 
-  // console.log(image);
-  // console.log(currentUser);
+  const [formData, setFormData] = useState({
+    username: currentUser.username,
+    email: currentUser.email,
+    profilePicture: currentUser.profilePicture,
+  });
 
   useEffect(() => {
     if (image) {
@@ -61,39 +71,81 @@ const Profile = () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) =>
           setFormData({ ...formData, profilePicture: downloadURL })
         );
+        setShowUploadSuccess(true);
+        setTimeout(() => {
+          setShowUploadSuccess(false);
+        }, [10000]);
       }
     );
   };
+
   const handleDeleteAccount = async () => {
+    if (
+      window.confirm(
+        "Are you sure you want to delete your account? This action cannot be undone."
+      )
+    ) {
+      try {
+        dispatch(deleteUserStart());
+        const res = await fetch(
+          `http://localhost:3500/user/${currentUser._id}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+            withCredentials: true,
+          }
+        );
+        const data = await res.json();
+        console.log(data);
+        if (data.success === false) {
+          dispatch(deleteUserFailure(data.message));
+          return;
+        }
+        dispatch(deleteUserSuccess(data));
+      } catch (error) {
+        console.log(error);
+        dispatch(deleteUserFailure(error));
+      }
+    }
+  };
+
+  const handleUpdate = async (event) => {
+    event.preventDefault();
     try {
-      dispatch(deleteUserStart());
+      dispatch(updateUserStart());
       const res = await fetch(`http://localhost:3500/user/${currentUser._id}`, {
-        method: "DELETE",
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
         credentials: "include",
+        withCredentials: true,
+        body: JSON.stringify(formData),
       });
       const data = await res.json();
-      console.log(data);
-      if (data.success === false) {
-        dispatch(deleteUserFailure(data.message));
-        return;
+      if (!res.ok) {
+        dispatch(updateUserFailure(data));
+        throw new Error("Network response was not ok");
       }
-      dispatch(deleteUserSuccess(data));
+      dispatch(updateUserSuccess(data));
+      setUpdateSuccess(true);
     } catch (error) {
-      console.log(error);
-      dispatch(deleteUserFailure(error));
+      dispatch(updateUserFailure(error));
     }
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
   };
 
   const handleSignOut = async () => {
     try {
-      await fetch("http://localhost:3500/auth/signout", { method: "POST" });
+      const response = await fetch("http://localhost:3500/auth/signout", {
+        method: "POST",
+        credentials: "include",
+        withCredentials: true,
+      });
+      const result = await response.json();
+      console.log(result);
       dispatch(signOut());
     } catch (error) {
       console.log(error);
@@ -103,7 +155,7 @@ const Profile = () => {
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl text-center font-bold my-6">Profile</h1>
-      <form className="flex flex-col space-y-6" onSubmit={handleSubmit}>
+      <form className="flex flex-col space-y-6" onSubmit={handleUpdate}>
         <input
           type="file"
           ref={fileRef}
@@ -114,16 +166,21 @@ const Profile = () => {
 
         <img
           width={100}
-          src={currentUser.profilePicture}
+          src={
+            formData.profilePicture
+              ? formData.profilePicture
+              : currentUser.profilePicture
+          }
           alt="profile-picture"
           className="rounded-full self-center object-cover"
         />
+
         <p className="text-sm self-center">
           {imageError ? (
             <span className="text-red-700">Error uploading image</span>
           ) : imagePercent > 0 && imagePercent < 100 ? (
             <span className="text-slate-700">{`Uploading: ${imagePercent} %`}</span>
-          ) : imagePercent === 100 ? (
+          ) : showUploadSuccess ? (
             <span className="text-green-700">Image uploaded successfully</span>
           ) : (
             ""
@@ -166,18 +223,24 @@ const Profile = () => {
         >
           {loading ? "UPDATE..." : "UPDATE"}
         </button>
-        <div className="flex justify-between text-red-600 font-semibold">
-          <span
-            onClick={handleDeleteAccount}
-            className="text-red-700 cursor-pointer"
-          >
-            Delete Account
-          </span>
-          <span onClick={handleSignOut} className="text-red-700 cursor-pointer">
-            Sign Out
-          </span>
-        </div>
       </form>
+      <div className="flex justify-between text-red-600 font-semibold">
+        <span
+          onClick={handleDeleteAccount}
+          className="text-red-700 cursor-pointer"
+        >
+          Delete Account
+        </span>
+        <span onClick={handleSignOut} className="text-red-700 cursor-pointer">
+          Sign Out
+        </span>
+      </div>
+      <div>
+        {error && <p className="text-red-700 mt-5">Something went wrong!</p>}
+        {updateSuccess && (
+          <p className="text-green-700 mt-5">User is updated successfully!</p>
+        )}
+      </div>
     </div>
   );
 };

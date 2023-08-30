@@ -2,6 +2,7 @@ import UserModel from "../model/user.model.js";
 import bcryptjs from "bcryptjs";
 import { errorHandler } from "../utils/error.js";
 import jwt from "jsonwebtoken";
+import { jwtSecret } from "../utils/jwtSecret.js";
 
 export const Signup = async (req, res, next) => {
   try {
@@ -31,23 +32,16 @@ export const SignIn = async (req, res, next) => {
     if (!match) {
       return next(errorHandler(401, "wrong credentials"));
     }
-
-    const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET, {
-      expiresIn: "20m",
-    });
+    const token = jwt.sign({ id: validUser._id }, jwtSecret);
 
     const { password: hashPassword, ...rest } = validUser._doc;
 
     res.cookie("access_token", token, {
       httpOnly: true,
-      secure: true,
+      path: "/",
+      domain: "localhost",
       maxAge: 30 * 60 * 1000,
-      sameSite: "None",
     });
-    res.cookies = {
-      access_token: token,
-    };
-
     return res.status(200).json(rest);
   } catch (error) {
     next(error);
@@ -60,13 +54,13 @@ export const Google = async (req, res, next) => {
 
     const User = await UserModel.findOne({ email });
     if (User) {
-      const token = jwt.sign({ id: User._id }, process.env.JWT_SECRET);
+      const token = jwt.sign({ id: User._id }, jwtSecret);
       const { password: hashPassword, ...rest } = User._doc;
       res
         .cookie("access_token", token, {
           httpOnly: true,
-          secure: true,
-          maxAge: 30 * 60 * 1000,
+          sameSite: "None",
+          expiresIn: "30m",
         })
         .status(200)
         .json(rest);
@@ -84,14 +78,13 @@ export const Google = async (req, res, next) => {
         profilePicture: photo,
       });
 
-      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
+      const token = jwt.sign({ id: newUser._id }, jwtSecret);
       const { password: removePassword, ...rest } = newUser._doc;
       console.log(token);
       res
         .cookie("access_token", token, {
           httpOnly: true,
-          secure: true,
-          maxAge: 30 * 60 * 1000,
+          expiresIn: "30m",
         })
         .status(200)
         .json(rest);
@@ -102,10 +95,10 @@ export const Google = async (req, res, next) => {
 };
 
 export const signout = (req, res, next) => {
-  const cookies = req.cookies;
-  console.log("signout cookies:", cookies);
+  // const cookies = req.cookies;
+  // console.log("signout cookies:", cookies);
 
-  // user is already signed out
+  // //user is already signed out
   // if (!cookies?.access_token) {
   //   return res.status(200).json({
   //     success: false,
