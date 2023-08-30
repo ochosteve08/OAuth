@@ -8,14 +8,14 @@ export const test = (req, res) => {
 
 export const updateUser = async (req, res, next) => {
   const { id } = req.params;
-  console.log(id)
+
   const {
     username,
     email,
     password: updatePassword,
     profilePicture,
   } = req.body;
-  console.log(req.body);
+
   if (req.user.id !== id) {
     return next(errorHandler(401, "kindly login"));
   }
@@ -45,9 +45,9 @@ export const updateUser = async (req, res, next) => {
 };
 
 export const deleteUser = async (req, res, next) => {
-  // if (req.user.id !== req.params.id) {
-  //   return next(errorHandler(401, "kindly login"));
-  // }
+  if (req.user.id !== req.params.id) {
+    return next(errorHandler(401, "kindly login"));
+  }
   try {
     await UserModel.findByIdAndDelete(req.params.id);
     res.status(200).json("User has been deleted...");

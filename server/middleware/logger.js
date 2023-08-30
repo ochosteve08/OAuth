@@ -33,6 +33,6 @@ export const logger = (req, res, next) => {
     `${req.method}\t${req.url}\t${req.headers.origin || "Origin not provided"}${JSON.stringify(req.cookies)}`,
     "reqlog.log"
   );
-  console.log(`${req.method} ${req.url} ${JSON.stringify(req.cookies)}`);
+  // console.log(`${req.method} ${req.url} ${JSON.stringify(req.cookies)}`);
   next();
 };
