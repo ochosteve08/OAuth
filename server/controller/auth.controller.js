@@ -14,7 +14,7 @@ export const Signup = async (req, res, next) => {
       password: hashPassword,
     });
     const { password: Password, ...rest } = newUser._doc;
-    res.json(user);
+    res.json(rest);
   } catch (error) {
     next(error);
   }
@@ -38,8 +38,9 @@ export const SignIn = async (req, res, next) => {
 
     res.cookie("access_token", token, {
       httpOnly: true,
-      path: "/",
-      domain: "localhost",
+      // path: "/",
+      // domain: "localhost",
+      secure: true,
       maxAge: 30 * 60 * 1000,
     });
     return res.status(200).json(rest);
