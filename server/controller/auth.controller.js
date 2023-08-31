@@ -38,12 +38,12 @@ export const SignIn = async (req, res, next) => {
 
     res.cookie("access_token", token, {
       httpOnly: true,
-      path: "/",
-      domain: "localhost",
-      SameSite: "Lax",
-      // domain: "o-auth-puce.vercel.app",
-      // SameSite: "None",
-      // secure: true,
+      // path: "/",
+      // domain: "localhost",
+      // SameSite: "Lax",
+      domain: "o-auth-puce.vercel.app",
+      SameSite: "None",
+      secure: true,
       maxAge: 30 * 60 * 1000,
     });
     return res.status(200).json(rest);
@@ -63,12 +63,12 @@ export const Google = async (req, res, next) => {
       res
         .cookie("access_token", token, {
           httpOnly: true,
-          path: "/",
-          domain: "localhost",
-          SameSite: "Lax",
-          // domain: "o-auth-puce.vercel.app",
-          // SameSite: "None",
-          // secure: true,
+          // path: "/",
+          // domain: "localhost",
+          // SameSite: "lax",
+          domain: "o-auth-puce.vercel.app",
+          SameSite: "none",
+          secure: true,
         })
         .status(200)
         .json(rest);
