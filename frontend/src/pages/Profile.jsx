@@ -111,17 +111,14 @@ const Profile = () => {
     ) {
       try {
         dispatch(deleteUserStart());
-        const res = await fetch(
-          `${BASE_URL}/user/${currentUser._id}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            credentials: "include",
-            withCredentials: true,
-          }
-        );
+        const res = await fetch(`${BASE_URL}/user/${currentUser._id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          withCredentials: true,
+        });
         const data = await res.json();
 
         if (data.success === false) {
@@ -163,7 +160,7 @@ const Profile = () => {
 
   const handleSignOut = async () => {
     try {
-      const response = await fetch( `${BASE_URL}/auth/signout`, {
+      const response = await fetch(`${BASE_URL}/auth/signout`, {
         method: "POST",
         credentials: "include",
         withCredentials: true,
@@ -189,14 +186,13 @@ const Profile = () => {
         />
 
         <img
-          width={100}
           src={
             formData.profilePicture
               ? formData.profilePicture
               : currentUser.profilePicture
           }
           alt="profile-picture"
-          className="rounded-full self-center object-cover"
+          className="rounded-full self-center object-cover h-20 w-20"
         />
 
         <p className="text-sm self-center">

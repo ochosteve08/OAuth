@@ -58,9 +58,9 @@ export const userSlice = createSlice({
       state.error = true;
     },
     signOut: () => initialState,
-  },
-  resetMessages: (state) => {
-    state.error = false;
+    resetMessages: (state) => {
+      state.error = false;
+    },
   },
 });
 
