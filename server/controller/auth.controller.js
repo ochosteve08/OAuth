@@ -40,6 +40,8 @@ export const SignIn = async (req, res, next) => {
       httpOnly: true,
       // path: "/",
       // domain: "localhost",
+      domain: "o-auth-puce.vercel.app",
+      SameSite: "None",
       secure: true,
       maxAge: 30 * 60 * 1000,
     });
@@ -60,8 +62,11 @@ export const Google = async (req, res, next) => {
       res
         .cookie("access_token", token, {
           httpOnly: true,
-          path: "/",
-          domain: "localhost",
+          // path: "/",
+          // domain: "localhost",
+          domain: "o-auth-puce.vercel.app",
+          SameSite: "None",
+          secure: true,
           maxAge: 30 * 60 * 1000,
         })
         .status(200)
