@@ -67,8 +67,9 @@ export const Google = async (req, res, next) => {
           // domain: "localhost",
           // SameSite: "lax",
           domain: "o-auth-puce.vercel.app",
-          SameSite: "none",
+          SameSite: "None",
           secure: true,
+          expiresIn: "30m",
         })
         .status(200)
         .json(rest);
@@ -91,6 +92,12 @@ export const Google = async (req, res, next) => {
 
       res.cookie("access_token", token, {
         httpOnly: true,
+        // path: "/",
+        // domain: "localhost",
+        // SameSite: "lax",
+        domain: "o-auth-puce.vercel.app",
+        SameSite: "None",
+        secure: true,
         expiresIn: "30m",
       });
 
