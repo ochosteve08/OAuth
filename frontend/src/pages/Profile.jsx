@@ -117,7 +117,7 @@ const Profile = () => {
             "Content-Type": "application/json",
           },
           credentials: "include",
-          withCredentials: true,
+          // withCredentials: true,
         });
         const data = await res.json();
 
@@ -143,7 +143,7 @@ const Profile = () => {
           "Content-Type": "application/json",
         },
         credentials: "include",
-        withCredentials: true,
+        // withCredentials: true,
         body: JSON.stringify(formData),
       });
       const data = await res.json();
