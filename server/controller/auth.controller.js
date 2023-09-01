@@ -42,7 +42,7 @@ export const SignIn = async (req, res, next) => {
       // domain: "localhost",
       // SameSite: "Lax",
       // domain: "o-auth-puce.vercel.app",
-      SameSite: "None",
+      sameSite: "None",
       secure: true,
       maxAge: 30 * 60 * 1000,
     });
@@ -67,7 +67,7 @@ export const Google = async (req, res, next) => {
           // domain: "localhost",
           // SameSite: "lax",
           // domain: "o-auth-puce.vercel.app",
-          SameSite: "None",
+          sameSite: "None",
           secure: true,
           expiresIn: "30m",
         })
@@ -96,7 +96,7 @@ export const Google = async (req, res, next) => {
         // domain: "localhost",
         // SameSite: "lax",
         // domain: "o-auth-puce.vercel.app",
-        SameSite: "None",
+        sameSite: "None",
         secure: true,
         expiresIn: "30m",
       });
